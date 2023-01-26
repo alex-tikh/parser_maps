@@ -9,6 +9,8 @@ import pandas as pd
 from selenium import webdriver
 from bs4 import BeautifulSoup
 
+from webdriver_manager.firefox import GeckoDriverManager
+
 from soup_parser import SoupContentParser
 from utils import json_pattern
 
@@ -54,7 +56,10 @@ class Parser:
                     df.to_csv(f'result_output/{type_org}_outputs.csv')
                     self.driver.quit()
                     sleep(random.uniform(2.2, 2.4))
-                    self.driver = webdriver.Safari()
+                    headOption = webdriver.FirefoxOptions()
+                    headOption.headless = True
+                    driver_path = GeckoDriverManager().install()
+                    self.driver = webdriver.Firefox(executable_path=driver_path, options=headOption)
                     self.driver.maximize_window()
                     self.driver.get('https://yandex.ru/maps')
                     parent_handle = self.driver.window_handles[0]
@@ -67,7 +72,10 @@ class Parser:
                 print('except')
                 # driver.quit()
                 sleep(random.uniform(2.2, 2.4))
-                self.driver = webdriver.Safari()
+                headOption = webdriver.FirefoxOptions()
+                headOption.headless = True
+                driver_path = GeckoDriverManager().install()
+                self.driver = webdriver.Firefox(executable_path=driver_path, options=headOption)
                 self.driver.maximize_window()
                 self.driver.get('https://yandex.ru/maps')
                 parent_handle = self.driver.window_handles[0]
@@ -91,6 +99,9 @@ if __name__ == "__main__":
     print('all_hrefs', len(all_hrefs))
 
 
-    driver = webdriver.Safari()
+    headOption = webdriver.FirefoxOptions()
+    headOption.headless = True
+    driver_path = GeckoDriverManager().install()
+    driver = webdriver.Firefox(executable_path=driver_path, options=headOption)
     parser = Parser(driver)
     parser.parse_data(all_hrefs, type_org)
