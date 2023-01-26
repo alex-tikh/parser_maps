@@ -6,6 +6,7 @@ from time import sleep
 
 from selenium import webdriver
 from selenium.webdriver import ActionChains
+from webdriver_manager.firefox import GeckoDriverManager
 
 from utils.constants import districts, ACCEPT_BUTTON, type_org_mapping
 
@@ -14,7 +15,7 @@ class LinksCollector:
     def __init__(self,
                  driver,
                  link='https://yandex.ru/maps',
-                 max_errors=5,
+                 max_errors=20,
                  accept_button=ACCEPT_BUTTON,
                  accept=False):
         self.driver = driver
@@ -31,9 +32,12 @@ class LinksCollector:
     def _open_page(self, request):
         self.driver.get(self.link)
         sleep(random.uniform(1, 2))
-        self.driver.find_element_by_class_name(name='search-form-view__input').send_keys(request)
+        # self.driver.find_element_by_class_name(name='search-form-view__input').send_keys(request)
+        ActionChains(self.driver).move_to_element(
+            self.driver.find_element_by_class_name(name='search-form-view__input')
+        ).send_keys(request).perform()
         sleep(random.uniform(0.4, 0.7))
-        self.driver.find_element_by_class_name(name='small-search-form-view__button').click()
+        self.driver.find_element_by_class_name(name='small-search-form-view__button').submit()
         # Нажимаем на кнопку поиска
         sleep(random.uniform(1.4, 2))
         self.slider = self.driver.find_element_by_class_name(name='scroll__scrollbar-thumb')
@@ -98,10 +102,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
     type_org = args.type_org
 
-    for type_org in ['translator', 'accountant', 'massage']:
-        for district in districts:
-            sleep(1)
-            driver = webdriver.Safari()
-            grabber = LinksCollector(driver)
-            grabber.run(city="Москва", district=district, type_org_ru=type_org_mapping[type_org], type_org=type_org)
+    # for type_org in ['translator', 'accountant', 'massage']:
+    for district in districts:
+        sleep(1)
+        headOption = webdriver.FirefoxOptions()
+        headOption.headless = True
+        driver_path = GeckoDriverManager().install()
+        driver = webdriver.Firefox(executable_path=driver_path, options=headOption)
+        # driver = webdriver.Safari()
+        grabber = LinksCollector(driver)
+        grabber.run(city="Москва", district=district, type_org_ru=type_org_mapping[type_org], type_org=type_org)
 
