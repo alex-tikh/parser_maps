@@ -1,4 +1,4 @@
-def into_json(org_id, name, address, website, opening_hours, ypage, goods, rating, reviews, phone, social):
+def into_json(org_id, name, address, coordinates, website, opening_hours, ypage, goods, rating, reviews, phone, social):
     """ Шаблон файла OUTPUT.json"""
 
     opening_hours_new = []
@@ -18,6 +18,7 @@ def into_json(org_id, name, address, website, opening_hours, ypage, goods, ratin
         "ID": org_id,
         "name": name,
         "address": address,
+        "coordinates": coordinates,
         "website": website,
 
         "opening_hours":

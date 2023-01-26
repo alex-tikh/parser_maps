@@ -46,7 +46,8 @@ class Parser:
                 social = self.soup_parser.get_social(soup)
                 phone = self.soup_parser.get_phone(soup)
                 goods, reviews = None, None
-                output = json_pattern.into_json(org_id, name, address, website, opening_hours, ypage, goods, rating,
+                coordinates = self.soup_parser.get_coordinates(soup)
+                output = json_pattern.into_json(org_id, name, address, coordinates, website, opening_hours, ypage, goods, rating,
                                                 reviews, phone, social)
                 outputs.append(output)
 

@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 from selenium.common.exceptions import NoSuchElementException, MoveTargetOutOfBoundsException
 from selenium.webdriver import ActionChains
 
+import json
+
 
 class SoupContentParser():
 
@@ -22,6 +24,15 @@ class SoupContentParser():
             return phones
         except Exception:
             return []
+        
+    def get_coordinates(self, soup_content):
+        try:
+            content = soup_content.find("script", {"class": "state-view"}).contents[0]
+            content_dict = json.loads(content)
+            coordinates = content_dict["stack"][0]["results"]["items"][0]["coordinates"]
+            return coordinates
+        except Exception:
+            return []        
 
     def get_social(self, soup_content):
         try:
