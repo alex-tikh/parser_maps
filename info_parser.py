@@ -2,6 +2,8 @@ import os
 import json
 import random
 import argparse
+import csv
+import signal
 
 from time import sleep
 
@@ -20,6 +22,26 @@ class Parser:
     def __init__(self, driver):
         self.driver = driver
         self.soup_parser = SoupContentParser()
+        
+    def _write_csv(self, outputs, type_org):
+        with open(f'result_output/{type_org}_outputs.csv', 'a', newline='') as csvfile:
+            headers = outputs[0].keys()
+            writer = csv.DictWriter(csvfile, delimiter=',', lineterminator='\n', fieldnames=headers)
+
+            if csvfile.tell() == 0:
+                writer.writeheader()  # file doesn't exist yet, write a header
+
+            writer.writerows(outputs)
+            
+    def _driver_quit(self):
+        driver_pid = self.driver.service.process.pid
+        self.driver.quit()
+        try:
+            os.kill(int(driver_pid), signal.SIGTERM)
+            print("Killed browser using process")
+        except ProcessLookupError as ex:
+            pass
+        
 
     def parse_data(self, hrefs, type_org):
         self.driver.maximize_window()
@@ -27,10 +49,11 @@ class Parser:
         parent_handle = self.driver.window_handles[0]
         org_id = 0
         outputs = []
+        if os.path.exists(f'result_output/{type_org}_outputs.csv'):
+            os.remove(f'result_output/{type_org}_outputs.csv')
 
         for organization_url in hrefs:
             try:
-            # if True:
                 self.driver.execute_script(f'window.open("{organization_url}","org_tab");')
                 child_handle = [x for x in self.driver.window_handles if x != parent_handle][0]
                 self.driver.switch_to.window(child_handle)
@@ -52,10 +75,9 @@ class Parser:
                 outputs.append(output)
 
                 if len(outputs) % 100 == 0:
-                    df = pd.DataFrame()
-                    df['outputs'] = outputs
-                    df.to_csv(f'result_output/{type_org}_outputs.csv')
-                    self.driver.quit()
+                    self._write_csv(outputs, type_org)
+                    outputs = []
+                    self._driver_quit()
                     sleep(random.uniform(2.2, 2.4))
                     headOption = webdriver.FirefoxOptions()
                     headOption.headless = True
@@ -69,9 +91,9 @@ class Parser:
                 self.driver.switch_to.window(parent_handle)
                 sleep(random.uniform(0.2, 0.4))
 
-            except:
-                print('except')
-                # driver.quit()
+            except Exception as e:
+                print('except', e)
+                self._driver_quit()
                 sleep(random.uniform(2.2, 2.4))
                 headOption = webdriver.FirefoxOptions()
                 headOption.headless = True
@@ -80,8 +102,11 @@ class Parser:
                 self.driver.maximize_window()
                 self.driver.get('https://yandex.ru/maps')
                 parent_handle = self.driver.window_handles[0]
+        
+        if len(outputs) > 0:
+            self._write_csv(outputs, type_org)
         print('Данные сохранены')
-        self.driver.quit()
+        self._driver_quit()
 
 
 if __name__ == "__main__":

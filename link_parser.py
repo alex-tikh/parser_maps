@@ -3,6 +3,7 @@ import random
 import json
 import argparse
 from time import sleep
+import signal
 
 from selenium import webdriver
 from selenium.webdriver import ActionChains
@@ -27,7 +28,15 @@ class LinksCollector:
 
     def _init_driver(self):
         self.driver.maximize_window()
-
+        
+    def _driver_quit(self):
+        driver_pid = self.driver.service.process.pid
+        self.driver.quit()
+        try:
+            os.kill(int(driver_pid), signal.SIGTERM)
+            print("Killed browser using process")
+        except ProcessLookupError as ex:
+            pass
 
     def _open_page(self, request):
         self.driver.get(self.link)
@@ -54,7 +63,7 @@ class LinksCollector:
                     flag = False
                 except:
                     if count > 5:
-                        self.driver.quit()
+                        self._driver_quit()
                         self._init_driver()
                         self._open_page(request)
                     flag = True
@@ -91,7 +100,7 @@ class LinksCollector:
         directory = f'links/{type_org}'
         if not os.path.exists(directory):
             os.makedirs(directory)
-        self.driver.quit()
+        self._driver_quit()
         with open(f'{directory}/{request}.json', 'w') as file:
             json.dump({'1': organizations_hrefs}, file)
 
