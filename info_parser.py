@@ -101,8 +101,6 @@ class Parser:
 
             except Exception as e:
                 print('except', e)
-                self.driver.switch_to.window(parent_handle)
-                sleep(random.uniform(0.2, 0.4))
                 self._driver_quit()
                 sleep(random.uniform(2.2, 2.4))
                 headOption = webdriver.FirefoxOptions()
