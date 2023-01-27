@@ -59,13 +59,13 @@ class Parser:
         outputs = []
         if os.path.exists(f'result_output/{type_org}_outputs.csv'):
             os.remove(f'result_output/{type_org}_outputs.csv')
-
+        
         for organization_url in hrefs:
             try:
                 self.driver.execute_script(f'window.open("{organization_url}","org_tab");')
                 child_handle = [x for x in self.driver.window_handles if x != parent_handle][0]
                 self.driver.switch_to.window(child_handle)
-                self._driver_wait(element_class="state-view")
+                sleep(1)
                 soup = BeautifulSoup(self.driver.page_source, "lxml")
                 org_id += 1
                 name = self.soup_parser.get_name(soup)
@@ -101,6 +101,8 @@ class Parser:
 
             except Exception as e:
                 print('except', e)
+                self.driver.switch_to.window(parent_handle)
+                sleep(random.uniform(0.2, 0.4))
                 self._driver_quit()
                 sleep(random.uniform(2.2, 2.4))
                 headOption = webdriver.FirefoxOptions()
