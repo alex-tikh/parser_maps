@@ -17,13 +17,15 @@ class SoupContentParser():
 
     def get_phone(self, soup_content):
         try:
+            content = soup_content.find("script", {"class": "state-view"}).contents[0]
+            content_dict = json.loads(content)
             phones = []
-            for data in soup_content.find_all("div", {"class": "card-phones-view__number"}):
-                phone = data.getText()
-                phones.append(phone)
-            return phones
+            for dict_phone in content_dict["stack"][0]["results"]["items"][0]["phones"]:
+                phones.append(dict_phone["number"].replace(" ", "") + " {" + dict_phone["info"] + "}")
+
+            return ", ".join(phones)
         except Exception:
-            return []
+            return ""
         
     def get_coordinates(self, soup_content):
         try:
@@ -40,9 +42,9 @@ class SoupContentParser():
             for data in soup_content.find_all("a", {"class": "button _view_secondary-gray _ui _size_medium _link"}):
                 social = data['href']
                 socials.append(social)
-            return socials
+            return ", ".join(socials)
         except Exception:
-            return []
+            return ""
 
     def get_address(self, soup_content):
         try:
