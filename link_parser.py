@@ -41,7 +41,6 @@ class LinksCollector:
     def _open_page(self, request):
         self.driver.get(self.link)
         sleep(random.uniform(1, 2))
-        # self.driver.find_element_by_class_name(name='search-form-view__input').send_keys(request)
         ActionChains(self.driver).move_to_element(
             self.driver.find_element_by_class_name(name='search-form-view__input')
         ).send_keys(request).perform()

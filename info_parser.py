@@ -9,6 +9,9 @@ from time import sleep
 
 import pandas as pd
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 
 from webdriver_manager.firefox import GeckoDriverManager
@@ -32,6 +35,11 @@ class Parser:
                 writer.writeheader()  # file doesn't exist yet, write a header
 
             writer.writerows(outputs)
+            
+    def _driver_wait(self, element_class, delay=10):
+        myElem = WebDriverWait(self.driver, delay).until(
+            EC.presence_of_element_located((By.CLASS_NAME, element_class))
+        )
             
     def _driver_quit(self):
         driver_pid = self.driver.service.process.pid
@@ -57,7 +65,7 @@ class Parser:
                 self.driver.execute_script(f'window.open("{organization_url}","org_tab");')
                 child_handle = [x for x in self.driver.window_handles if x != parent_handle][0]
                 self.driver.switch_to.window(child_handle)
-                sleep(0.7)
+                self._driver_wait(element_class="state-view")
                 soup = BeautifulSoup(self.driver.page_source, "lxml")
                 org_id += 1
                 name = self.soup_parser.get_name(soup)
