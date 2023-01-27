@@ -21,16 +21,13 @@ def into_json(org_id, name, address, coordinates, website, opening_hours, ypage,
         "coordinates": coordinates,
         "website": website,
 
-        "opening_hours":
-            {
-                "mon": opening_hours[0][3:],
-                "tue": opening_hours[1][3:],
-                "wed": opening_hours[2][3:],
-                "thu": opening_hours[3][3:],
-                "fri": opening_hours[4][3:],
-                "sat": opening_hours[5][3:],
-                "sun": opening_hours[6][3:]
-            },
+        "opening_hours": f"'mon': {opening_hours[0][3:]}, "
+                         f"'tue': {opening_hours[1][3:]}, "
+                         f"'wed': {opening_hours[2][3:]}, "
+                         f"'thu': {opening_hours[3][3:]}, "
+                         f"'fri': {opening_hours[4][3:]}, "
+                         f"'sat': {opening_hours[5][3:]}, "
+                         f"'sun': {opening_hours[6][3:]}",
         "ypage": ypage,
         "goods": goods,
         "rating": rating,
