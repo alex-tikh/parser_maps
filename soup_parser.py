@@ -151,3 +151,30 @@ class SoupContentParser():
             return reviews
         except Exception:
             return ""
+    
+    def get_transport_stops(self, soup_content):
+        content = soup_content.find("script", {"class": "state-view"}).contents[0]
+        content_dict = json.loads(content)
+        try:
+            res = ""
+            for metro_dict in content_dict["stack"][0]["results"]["items"][0]["metro"]:
+                res += "метро " + metro_dict["name"] + " (" + metro_dict["distance"] + ")\n"
+
+            for stop_dict in content_dict["stack"][0]["results"]["items"][0]["stops"]:
+                res += "остановка " + stop_dict["name"] + " (" + stop_dict["distance"] + ")\n"
+            return res
+        except Exception:
+            pass
+
+        try:
+            res = ""
+            for metro_dict in content_dict["stack"][0]["stops"]["data"]["searchResult"]["metro"]:
+                res += ("метро " + metro_dict["name"] + " (" + metro_dict["distance"] + ")\n")
+
+            for stop_dict in content_dict["stack"][0]["stops"]["data"]["searchResult"]["stops"]:
+                res += ("остановка " + stop_dict["name"] + " (" + stop_dict["distance"] + ")\n")
+
+            return res
+        except Exception:
+            return ''
+    

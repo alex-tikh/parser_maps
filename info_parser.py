@@ -78,8 +78,12 @@ class Parser:
                 phone = self.soup_parser.get_phone(soup)
                 goods, reviews = None, None
                 coordinates = self.soup_parser.get_coordinates(soup)
-                output = json_pattern.into_json(org_id, name, address, coordinates, website, opening_hours, ypage, goods, rating,
-                                                reviews, phone, social)
+                n_reviews = self.soup_parser.get_review_number(soup)
+                stops = self.soup_parser.get_transport_stops(soup)
+                output = json_pattern.into_json(
+                    org_id, name, address, coordinates, website, opening_hours,
+                    ypage, rating, n_reviews, phone, social, stops
+                )
                 outputs.append(output)
 
                 if len(outputs) % 100 == 0:
