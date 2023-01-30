@@ -25,7 +25,13 @@ class SoupContentParser():
             content_dict = json.loads(content)
             phones = []
             for dict_phone in content_dict["stack"][0]["results"]["items"][0]["phones"]:
-                phones.append(dict_phone["number"].replace(" ", "") + " {" + dict_phone["info"] + "}")
+                try:
+                    phones.append(dict_phone["number"].replace(" ", "") + " {" + dict_phone["info"] + "}")
+                except Exception:
+                    try:
+                        phones.append(dict_phone["number"].replace(" ", ""))
+                    except Exception:
+                        pass
 
             return ", ".join(phones)
         except Exception:
@@ -113,6 +119,11 @@ class SoupContentParser():
             return ""
 
     def get_review_number(self, soup_content):
+        try:
+            n_reviews = soup_content.find("div", {"class": "business-header-rating-view__text"}).getText()
+            return n_reviews
+        except Exception:
+            pass
         try:
             n_reviews = soup_content.find("div", {"class": "business-header-rating-view__text _clickable"}).getText()
             return n_reviews
