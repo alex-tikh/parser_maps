@@ -9,11 +9,15 @@ class SoupContentParser():
 
     def get_name(self, soup_content):
         try:
-            for data in soup_content.find_all("h1", {"class": "orgpage-header-view__header"}):
-                name = data.getText()
+            name = soup_content.find("h1", {"class": "orgpage-header-view__header"}).getText()
             return name
         except Exception:
-            return ""
+            pass
+        try:
+            name = soup_content.find("h1", {"class": "card-title-view__title"}).getText()
+            return name
+        except Exception:
+            return ''
 
     def get_phone(self, soup_content):
         try:
@@ -48,16 +52,14 @@ class SoupContentParser():
 
     def get_address(self, soup_content):
         try:
-            for data in soup_content.find_all("a", {"class": "business-contacts-view__address-link"}):
-                address = data.getText()
+            address = soup_content.find("a", {"class": "business-contacts-view__address-link"}).getText()
             return address
         except Exception:
             return ""
 
     def get_website(self, soup_content):
         try:
-            for data in soup_content.find_all("span", {"class": "business-urls-view__text"}):
-                website = data.getText()
+            website = soup_content.find("span", {"class": "business-urls-view__text"}).getText()
             return website
         except Exception:
             return ""
