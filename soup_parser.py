@@ -112,6 +112,13 @@ class SoupContentParser():
         except Exception:
             return ""
 
+    def get_review_number(self, soup_content):
+        try:
+            n_reviews = soup_content.find("div", {"class": "business-header-rating-view__text _clickable"}).getText()
+            return n_reviews
+        except Exception:
+            return ""
+        
     def get_reviews(self, soup_content, driver):
         reviews = []
         slider = driver.find_element_by_class_name(name='scroll__scrollbar-thumb')
