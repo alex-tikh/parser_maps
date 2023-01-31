@@ -11,14 +11,16 @@ from webdriver_manager.firefox import GeckoDriverManager
 
 from utils.constants import districts, ACCEPT_BUTTON, type_org_mapping
 
-class LinksCollector:
 
-    def __init__(self,
-                 driver,
-                 link='https://yandex.ru/maps',
-                 max_errors=20,
-                 accept_button=ACCEPT_BUTTON,
-                 accept=False):
+class LinksCollector:
+    def __init__(
+        self,
+        driver,
+        link="https://yandex.ru/maps",
+        max_errors=20,
+        accept_button=ACCEPT_BUTTON,
+        accept=False,
+    ):
         self.driver = driver
         self.slider = None
         self.max_errors = max_errors
@@ -28,7 +30,7 @@ class LinksCollector:
 
     def _init_driver(self):
         self.driver.maximize_window()
-        
+
     def _driver_quit(self):
         driver_pid = self.driver.service.process.pid
         self.driver.quit()
@@ -42,16 +44,20 @@ class LinksCollector:
         self.driver.get(self.link)
         sleep(random.uniform(1, 2))
         ActionChains(self.driver).move_to_element(
-            self.driver.find_element_by_class_name(name='search-form-view__input')
+            self.driver.find_element_by_class_name(name="search-form-view__input")
         ).send_keys(request).perform()
         sleep(random.uniform(0.4, 0.7))
-        self.driver.find_element_by_class_name(name='small-search-form-view__button').submit()
+        self.driver.find_element_by_class_name(
+            name="small-search-form-view__button"
+        ).submit()
         # Нажимаем на кнопку поиска
         sleep(random.uniform(1.4, 2))
-        self.slider = self.driver.find_element_by_class_name(name='scroll__scrollbar-thumb')
+        self.slider = self.driver.find_element_by_class_name(
+            name="scroll__scrollbar-thumb"
+        )
 
         if self.accept:
-        # Соглашение куки
+            # Соглашение куки
             flag = True
             count = 0
             while flag:
@@ -67,10 +73,9 @@ class LinksCollector:
                         self._open_page(request)
                     flag = True
 
-
     def run(self, city, district, type_org_ru, type_org):
         self._init_driver()
-        request = city + ' ' + district + ' ' + type_org_ru
+        request = city + " " + district + " " + type_org_ru
         self._open_page(request)
         organizations_hrefs = []
 
@@ -79,10 +84,18 @@ class LinksCollector:
         errors = 0
         while self.max_errors > errors:
             try:
-                ActionChains(self.driver).click_and_hold(self.slider).move_by_offset(0, int(100/errors)).release().perform()
-                slider_organizations_hrefs = self.driver.find_elements_by_class_name(name='search-snippet-view__link-overlay')
-                slider_organizations_hrefs = [href.get_attribute("href") for href in slider_organizations_hrefs]
-                organizations_hrefs = list(set(organizations_hrefs + slider_organizations_hrefs))
+                ActionChains(self.driver).click_and_hold(self.slider).move_by_offset(
+                    0, int(100 / errors)
+                ).release().perform()
+                slider_organizations_hrefs = self.driver.find_elements_by_class_name(
+                    name="search-snippet-view__link-overlay"
+                )
+                slider_organizations_hrefs = [
+                    href.get_attribute("href") for href in slider_organizations_hrefs
+                ]
+                organizations_hrefs = list(
+                    set(organizations_hrefs + slider_organizations_hrefs)
+                )
                 count += 1
                 if count % 3 == 0:
                     if len(organizations_hrefs) == link_number[-1]:
@@ -93,15 +106,15 @@ class LinksCollector:
                 sleep(random.uniform(0.05, 0.1))
             except Exception:
                 errors = errors + 1
-                print('errors', errors)
+                print("errors", errors)
                 sleep(random.uniform(0.3, 0.4))
 
-        directory = f'links/{type_org}'
+        directory = f"links/{type_org}"
         if not os.path.exists(directory):
             os.makedirs(directory)
         self._driver_quit()
-        with open(f'{directory}/{request}.json', 'w') as file:
-            json.dump({'1': organizations_hrefs}, file)
+        with open(f"{directory}/{request}.json", "w") as file:
+            json.dump({"1": organizations_hrefs}, file)
 
 
 if __name__ == "__main__":
@@ -119,5 +132,9 @@ if __name__ == "__main__":
         driver = webdriver.Firefox(executable_path=driver_path, options=headOption)
         # driver = webdriver.Safari()
         grabber = LinksCollector(driver)
-        grabber.run(city="Москва", district=district, type_org_ru=type_org_mapping[type_org], type_org=type_org)
-
+        grabber.run(
+            city="Москва",
+            district=district,
+            type_org_ru=type_org_mapping[type_org],
+            type_org=type_org,
+        )

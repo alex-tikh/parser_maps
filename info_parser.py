@@ -7,7 +7,6 @@ import signal
 
 from time import sleep
 
-import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -21,26 +20,27 @@ from utils import json_pattern
 
 
 class Parser:
-
     def __init__(self, driver):
         self.driver = driver
         self.soup_parser = SoupContentParser()
-        
+
     def _write_csv(self, outputs, type_org):
-        with open(f'result_output/{type_org}_outputs.csv', 'a', newline='') as csvfile:
+        with open(f"result_output/{type_org}_outputs.csv", "a", newline="") as csvfile:
             headers = outputs[0].keys()
-            writer = csv.DictWriter(csvfile, delimiter=',', lineterminator='\n', fieldnames=headers)
+            writer = csv.DictWriter(
+                csvfile, delimiter=",", lineterminator="\n", fieldnames=headers
+            )
 
             if csvfile.tell() == 0:
                 writer.writeheader()  # file doesn't exist yet, write a header
 
             writer.writerows(outputs)
-            
+
     def _driver_wait(self, element_class, delay=10):
         myElem = WebDriverWait(self.driver, delay).until(
             EC.presence_of_element_located((By.CLASS_NAME, element_class))
         )
-            
+
     def _driver_quit(self):
         driver_pid = self.driver.service.process.pid
         self.driver.quit()
@@ -49,21 +49,24 @@ class Parser:
             print("Killed browser using process")
         except ProcessLookupError as ex:
             pass
-        
 
     def parse_data(self, hrefs, type_org):
         self.driver.maximize_window()
-        self.driver.get('https://yandex.ru/maps')
+        self.driver.get("https://yandex.ru/maps")
         parent_handle = self.driver.window_handles[0]
         org_id = 0
         outputs = []
-        if os.path.exists(f'result_output/{type_org}_outputs.csv'):
-            os.remove(f'result_output/{type_org}_outputs.csv')
-        
+        if os.path.exists(f"result_output/{type_org}_outputs.csv"):
+            os.remove(f"result_output/{type_org}_outputs.csv")
+
         for organization_url in hrefs:
             try:
-                self.driver.execute_script(f'window.open("{organization_url}","org_tab");')
-                child_handle = [x for x in self.driver.window_handles if x != parent_handle][0]
+                self.driver.execute_script(
+                    f'window.open("{organization_url}","org_tab");'
+                )
+                child_handle = [
+                    x for x in self.driver.window_handles if x != parent_handle
+                ][0]
                 self.driver.switch_to.window(child_handle)
                 sleep(1)
                 soup = BeautifulSoup(self.driver.page_source, "lxml")
@@ -81,8 +84,18 @@ class Parser:
                 n_reviews = self.soup_parser.get_review_number(soup)
                 stops = self.soup_parser.get_transport_stops(soup)
                 output = json_pattern.into_json(
-                    org_id, name, address, coordinates, website, opening_hours,
-                    ypage, rating, n_reviews, phone, social, stops
+                    org_id,
+                    name,
+                    address,
+                    coordinates,
+                    website,
+                    opening_hours,
+                    ypage,
+                    rating,
+                    n_reviews,
+                    phone,
+                    social,
+                    stops,
                 )
                 outputs.append(output)
 
@@ -94,30 +107,34 @@ class Parser:
                     headOption = webdriver.FirefoxOptions()
                     headOption.headless = True
                     driver_path = GeckoDriverManager().install()
-                    self.driver = webdriver.Firefox(executable_path=driver_path, options=headOption)
+                    self.driver = webdriver.Firefox(
+                        executable_path=driver_path, options=headOption
+                    )
                     self.driver.maximize_window()
-                    self.driver.get('https://yandex.ru/maps')
+                    self.driver.get("https://yandex.ru/maps")
                     parent_handle = self.driver.window_handles[0]
-                print(f'Данные добавлены, id - {org_id}')
+                print(f"Данные добавлены, id - {org_id}")
 
                 self.driver.switch_to.window(parent_handle)
                 sleep(random.uniform(0.2, 0.4))
 
             except Exception as e:
-                print('except', e)
+                print("except", e)
                 self._driver_quit()
                 sleep(random.uniform(2.2, 2.4))
                 headOption = webdriver.FirefoxOptions()
                 headOption.headless = True
                 driver_path = GeckoDriverManager().install()
-                self.driver = webdriver.Firefox(executable_path=driver_path, options=headOption)
+                self.driver = webdriver.Firefox(
+                    executable_path=driver_path, options=headOption
+                )
                 self.driver.maximize_window()
-                self.driver.get('https://yandex.ru/maps')
+                self.driver.get("https://yandex.ru/maps")
                 parent_handle = self.driver.window_handles[0]
-        
+
         if len(outputs) > 0:
             self._write_csv(outputs, type_org)
-        print('Данные сохранены')
+        print("Данные сохранены")
         self._driver_quit()
 
 
@@ -128,14 +145,13 @@ if __name__ == "__main__":
     type_org = args.type_org
 
     all_hrefs = []
-    files = os.listdir(f'links/{type_org}')
+    files = os.listdir(f"links/{type_org}")
     for file in files:
-        with open(f'links/{type_org}/{file}', 'r', encoding='utf-8') as f:
-            hrefs = json.load(f)['1']
+        with open(f"links/{type_org}/{file}", "r", encoding="utf-8") as f:
+            hrefs = json.load(f)["1"]
             all_hrefs += hrefs
     all_hrefs = list(set(all_hrefs))
-    print('all_hrefs', len(all_hrefs))
-
+    print("all_hrefs", len(all_hrefs))
 
     headOption = webdriver.FirefoxOptions()
     headOption.headless = True
