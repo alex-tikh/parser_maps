@@ -12,6 +12,7 @@ venv/
 # Output
 *.json
 *.csv
+*.log
 
 # Jupyter Notebook
 .ipynb_checkpoints
