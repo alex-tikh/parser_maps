@@ -6,6 +6,7 @@ type_org_mapping = {
     "health": "медучреждение",
     "sport": "фитнес",
     "cafe": "кафе",
+    "fastfood": "фастфуд",
     "restoran": "ресторан",
     "coffee": "кофейня",
     "pub": "бар",
