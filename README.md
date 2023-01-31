@@ -1,6 +1,5 @@
 # parser_maps
-![plot](img.png)
-## Parsing Yandex Maps 'https://yandex.ru/maps'
+## Parsing Maps
 ### Requirements
 - Python>=3.8
 - Firefox installed
