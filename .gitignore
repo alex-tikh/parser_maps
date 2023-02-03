@@ -19,3 +19,9 @@ venv/
 
 # MacOS
 .DS_Store
+
+# Tests
+.coverage
+
+# IDE
+.idea/
