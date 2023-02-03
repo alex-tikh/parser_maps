@@ -11,15 +11,23 @@ from webdriver_manager.firefox import GeckoDriverManager
 
 from utils.constants import districts, ACCEPT_BUTTON, type_org_mapping
 
+from selenium.webdriver.firefox.webdriver import WebDriver
+
 
 class LinksCollector:
+    """
+    A class to retrieve links to pages of facilities in the region
+    ...
+    Attributes
+    ----------
+    """
     def __init__(
         self,
-        driver,
-        link="https://yandex.ru/maps",
-        max_errors=20,
-        accept_button=ACCEPT_BUTTON,
-        accept=False,
+        driver: WebDriver,
+        link: str = "https://yandex.ru/maps",
+        max_errors: int = 20,
+        accept_button: str = ACCEPT_BUTTON,
+        accept: bool = False,
     ):
         self.driver = driver
         self.slider = None
@@ -40,7 +48,7 @@ class LinksCollector:
         except ProcessLookupError as ex:
             pass
 
-    def _open_page(self, request):
+    def _open_page(self, request: str):
         self.driver.get(self.link)
         sleep(random.uniform(1, 2))
         ActionChains(self.driver).move_to_element(
@@ -73,7 +81,7 @@ class LinksCollector:
                         self._open_page(request)
                     flag = True
 
-    def run(self, city, district, type_org_ru, type_org):
+    def run(self, city: str, district: str, type_org_ru: str, type_org: str):
         self._init_driver()
         request = city + " " + district + " " + type_org_ru
         self._open_page(request)
@@ -100,6 +108,7 @@ class LinksCollector:
                 if count % 3 == 0:
                     if len(organizations_hrefs) == link_number[-1]:
                         errors = errors + 1
+                        print("errors", errors)
                     print(len(organizations_hrefs))
                     link_number.append(len(organizations_hrefs))
 
