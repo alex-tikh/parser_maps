@@ -17,6 +17,7 @@ type_org_mapping = {
     "postamat": "постамат",
     "pickup": "пвз",
     "stop": "остановка",
+    "kindergarten": "Детский сад",
     #     'salon': 'Салоны красоты',
     #     'studio': 'Ателье',
     #     'auto': 'Автосалоны',
