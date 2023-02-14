@@ -11,6 +11,7 @@ def into_json(
     phone,
     social,
     stops,
+    tags,
 ):
     """Шаблон файла OUTPUT.json"""
 
@@ -46,5 +47,6 @@ def into_json(
         "phone": phone,
         "social": social,
         "stops": stops,
+        "tags": tags,
     }
     return data_grabbed

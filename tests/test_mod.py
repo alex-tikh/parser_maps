@@ -82,3 +82,8 @@ def test_soup_get_transport_stops(soup, soup_parser):
 def test_soup_get_coordinates(soup, soup_parser):
     coordinates = soup_parser.get_coordinates(soup)
     assert coordinates == [37.536931, 55.796567]
+
+
+def test_soup_get_tags(soup, soup_parser):
+    tags = soup_parser.get_tags(soup)
+    assert tags == "Кафе, доставка еды и обедов, кофейня"

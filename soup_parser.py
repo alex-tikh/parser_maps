@@ -259,3 +259,13 @@ class SoupContentParser:
             return res
         except Exception:
             return ""
+
+    def get_tags(self, soup_content):
+        try:
+            tags = []
+            for data in soup_content.find_all("a", {"class": "orgpage-categories-info-view__link"}):
+                tags.append(data["aria-label"])
+
+            return ", ".join(tags)
+        except Exception:
+            return ""

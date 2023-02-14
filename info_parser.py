@@ -83,6 +83,7 @@ class Parser:
                 coordinates = self.soup_parser.get_coordinates(soup)
                 n_reviews = self.soup_parser.get_review_number(soup)
                 stops = self.soup_parser.get_transport_stops(soup)
+                tags = self.soup_parser.get_tags(soup)
                 output = json_pattern.into_json(
                     org_id,
                     name,
@@ -96,6 +97,7 @@ class Parser:
                     phone,
                     social,
                     stops,
+                    tags,
                 )
                 outputs.append(output)
 
