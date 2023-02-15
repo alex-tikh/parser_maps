@@ -22,6 +22,7 @@ venv/
 
 # Tests
 .coverage
+.pytest_cache/
 
 # IDE
 .idea/
