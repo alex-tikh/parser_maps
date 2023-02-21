@@ -29,7 +29,7 @@ class Parser:
         with open(f"result_output/{type_org}_outputs.csv", "a", newline="") as csvfile:
             headers = outputs[0].keys()
             writer = csv.DictWriter(
-                csvfile, delimiter=",", lineterminator="\n", fieldnames=headers
+                csvfile, delimiter="\t", lineterminator="\n", fieldnames=headers
             )
 
             if csvfile.tell() == 0:
