@@ -137,9 +137,8 @@ if __name__ == "__main__":
         sleep(1)
         headOption = webdriver.FirefoxOptions()
         headOption.headless = True
-        driver_path = GeckoDriverManager().install()
+        driver_path = GeckoDriverManager(path="drivers", version="0.32.2").install()
         driver = webdriver.Firefox(executable_path=driver_path, options=headOption)
-        # driver = webdriver.Safari()
         grabber = LinksCollector(driver)
         grabber.run(
             city="Москва",
