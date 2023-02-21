@@ -85,8 +85,12 @@ class Parser:
                 n_reviews = self.soup_parser.get_review_number(soup)
                 stops = self.soup_parser.get_transport_stops(soup)
                 tags = self.soup_parser.get_tags(soup)
+                city = self.soup_parser.get_city(soup)
+                category = self.soup_parser.get_category(soup)
                 output = json_pattern.into_json(
                     org_id,
+                    city,
+                    category,
                     name,
                     address,
                     coordinates,

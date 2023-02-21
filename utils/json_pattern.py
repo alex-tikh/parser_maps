@@ -1,5 +1,7 @@
 def into_json(
     org_id,
+    city,
+    category,
     name,
     address,
     coordinates,
@@ -30,6 +32,8 @@ def into_json(
 
     data_grabbed = {
         "ID": org_id,
+        "city": city,
+        "category": category,
         "name": name,
         "address": address,
         "coordinates": coordinates,

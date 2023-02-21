@@ -263,9 +263,31 @@ class SoupContentParser:
     def get_tags(self, soup_content):
         try:
             tags = []
-            for data in soup_content.find_all("a", {"class": "orgpage-categories-info-view__link"}):
+            for data in soup_content.find_all(
+                    "a", {"class": "orgpage-categories-info-view__link"}
+            ):
                 tags.append(data["aria-label"])
 
             return ", ".join(tags)
+        except Exception:
+            return ""
+
+    def get_city(self, soup_content):
+        try:
+            data = soup_content.find_all(
+                "a", {"class": "breadcrumbs-view__breadcrumb _outline"}
+            )[1]
+
+            return data["aria-label"]
+        except Exception:
+            return ""
+
+    def get_category(self, soup_content):
+        try:
+            data = soup_content.find_all(
+                "a", {"class": "breadcrumbs-view__breadcrumb _outline"}
+            )[2]
+
+            return data["aria-label"]
         except Exception:
             return ""
