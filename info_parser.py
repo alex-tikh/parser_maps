@@ -4,6 +4,7 @@ import random
 import argparse
 import csv
 import signal
+import glob
 
 from time import sleep
 
@@ -147,9 +148,9 @@ if __name__ == "__main__":
     type_org = args.type_org
 
     all_hrefs = []
-    files = os.listdir(f"links/{type_org}")
+    files = glob.glob(f"links/{type_org}/*.json")
     for file in files:
-        with open(f"links/{type_org}/{file}", "r", encoding="utf-8") as f:
+        with open(file, "r", encoding="utf-8") as f:
             hrefs = json.load(f)["1"]
             all_hrefs += hrefs
     all_hrefs = list(set(all_hrefs))
